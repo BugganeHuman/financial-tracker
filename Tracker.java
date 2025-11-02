@@ -21,7 +21,8 @@ class Tracker {
                 "month INTEGER NOT NULL," +
                 "day INTEGER NOT NULL," +
                 "expenses INTEGER," +
-                "income INTEGER" +
+                "income INTEGER," +
+                "profit INTEGER" +
                 ");";
         try (var connection = DriverManager.getConnection(url); var statement = connection.createStatement();) {
             statement.execute(sql);
@@ -48,14 +49,15 @@ class Tracker {
                     reduceInBalance(rs.getInt("expenses"), rs.getInt("income"));
                     rs.close();
                     String urlUpdate = "jdbc:sqlite:finance";
-                    String sqlUpdate = "UPDATE finance SET expenses = ?, income = ? WHERE year = ? AND month = ? AND day = ? ";
+                    String sqlUpdate = "UPDATE finance SET expenses = ?, income = ?, profit = ? WHERE year = ? AND month = ? AND day = ? ";
                     try (var prSt = conn.prepareStatement(sqlUpdate);) {
                         addInBalance(expenses, income);
                         prSt.setInt(1, expenses);
                         prSt.setInt(2, income);
-                        prSt.setInt(3, year);
-                        prSt.setInt(4, month);
-                        prSt.setInt(5, day);
+                        prSt.setInt(3, income - expenses);
+                        prSt.setInt(4, year);
+                        prSt.setInt(5, month);
+                        prSt.setInt(6, day);
                         prSt.executeUpdate();
                         return;
 
@@ -71,7 +73,7 @@ class Tracker {
         } catch (SQLException e) {
             System.out.println("error in tracker2 " + e.getMessage() + e.getErrorCode() );
         }
-        String sql = "INSERT INTO finance (year, month, day, expenses, income) VALUES (?,?,?,?,?)";
+        String sql = "INSERT INTO finance (year, month, day, expenses, income, profit) VALUES (?,?,?,?,?,?)";
         addInBalance(expenses,income);
         try(var connection = DriverManager.getConnection(url); var prStmt = connection.prepareStatement(sql)) {
             prStmt.setInt(1, year);
@@ -79,6 +81,7 @@ class Tracker {
             prStmt.setInt(3, day);
             prStmt.setInt(4, expenses);
             prStmt.setInt(5, income);
+            prStmt.setInt(6, income - expenses);
             prStmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println("error in tracker3 " + e.getMessage());
@@ -91,7 +94,7 @@ class Tracker {
 
 
 
-    public void reportForAPeriod (int startYear, int startMonth, int startDay, // здесь баг
+    public void reportForAPeriod (int startYear, int startMonth, int startDay,
                                          int finishYear, int finishMonth, int finishDay) {
         String url = "jdbc:sqlite:financialDatabase.db";
         String sql = "SELECT * FROM finance WHERE year >= ? AND year <= ?" +
@@ -121,11 +124,10 @@ class Tracker {
             System.out.println("error in reportForAPeriod " + e.getMessage());
         }
 
-
-
-
-
     }
+
+
+
 
 
     public void createBalance (int moneyNow) {
@@ -140,6 +142,8 @@ class Tracker {
             System.out.println(e.getMessage());
         }
     }
+
+
 
     public void addInBalance (int expenses, int income) {
         Path pathToFileWithBalance = Path.of("balance.txt");
@@ -174,6 +178,81 @@ class Tracker {
 
     }
 
+    public void showBalance () {
+        Path pathToFileWithBalance = Path.of("balance.txt");
+
+        try {
+            String balance = Files.readString(pathToFileWithBalance);
+            System.out.println(Integer.parseInt(balance));
+
+        } catch (IOException e) {
+            System.out.println("error in showBalance(), "+e.getMessage());
+        }
+    }
+
+    public void sortingTable (String sortingOn, String period){ // дописать что бы можно было учитывать периор типа сортировать по (годам, месяцам, дням)
+        String url = "jdbc:sqlite:financialDatabase.db";
+        String sql;
+        if (sortingOn.equals("profitable")){
+            sql = "SELECT * FROM finance ORDER BY profit DESC";
+
+
+            try (var conn = DriverManager.getConnection(url);
+                 var prSt = conn.prepareStatement(sql);
+                 var rs = prSt.executeQuery();) {
+                while (rs.next()) {
+                    System.out.printf("Year - %d  Month - %d  Date - %d  expenses - %d  income - %d  profit - %d%n",
+                            rs.getInt("year"),
+                            rs.getInt("month"),
+                            rs.getInt("day"),
+                            rs.getInt("expenses"),
+                            rs.getInt("income"),
+                            rs.getInt("profit")
+
+                    );
+
+                }
+
+
+            } catch (SQLException e) {
+                System.out.println("error in showBalance () "+e.getMessage());
+            }
+
+
+
+
+        } else if (sortingOn.equals("unprofitable")) {
+            sql = "SELECT * FROM finance ORDER BY profit ASC";
+
+
+        try (var conn = DriverManager.getConnection(url);
+             var prSt = conn.prepareStatement(sql);
+             var rs = prSt.executeQuery();) {
+
+            while (rs.next()) {
+                System.out.printf("Year - %d  Month - %d  Date - %d  expenses - %d  income - %d  profit - %d%n",
+                        rs.getInt("year"),
+                        rs.getInt("month"),
+                        rs.getInt("day"),
+                        rs.getInt("expenses"),
+                        rs.getInt("income"),
+                        rs.getInt("profit")
+
+                );
+
+            }
+
+
+        } catch (SQLException e) {
+            System.out.println("error in showBalance () "+e.getMessage());
+        }
+        }
+
+
+
+
+
+    }
 }
 // мне надо методы: 1) создания таблицы,2) добавления данных в таблицу с учетом дубликатов (потом как улучшение можно добавить
 // удаление и прибавление средств с баланса)
