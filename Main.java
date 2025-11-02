@@ -80,13 +80,13 @@ public static void read() {
 
 
 
-public static void update(String oldName, String newName) {
+public static void update() {
     String url = "jdbc:sqlite:testDatabase.db";
-    String sql = "UPDATE animals SET name = ? WHERE name = ?";
-    try(var conn = DriverManager.getConnection(url); var prSt = conn.prepareStatement(sql);) {
-        prSt.setString(1, newName);
-        prSt.setString(2, oldName);
+    String sql = "UPDATE animals SET name = 'bitch' WHERE typeOfAnimal = 'squirrel'";
+    try(var conn = DriverManager.getConnection(url); var prSt = conn.prepareStatement(sql)) {
         prSt.executeUpdate();
+
+
     } catch (SQLException e) {
         System.out.println(e.getMessage());
     }
@@ -94,30 +94,27 @@ public static void update(String oldName, String newName) {
 }
 
 
-public static void delete (int id) {
-    String url = "jdbc:sqlite:testDatabase.db";
-    String sql = "DELETE FROM animals WHERE id = ?";
-    try (var conn = DriverManager.getConnection(url);var prSt = conn.prepareStatement(sql);) {
-        prSt.setInt(1, id);
-        prSt.executeUpdate();
-
-    } catch (SQLException e) {
-        System.out.println(e.getMessage());
-    }
-
+public static void delete () {
+String url = "jdbc:sqlite:testDatabase.db";
+String sql = "DELETE FROM animals WHERE typeOfAnimal = 'human'";
+try(var conn = DriverManager.getConnection(url);var prSt = conn.prepareStatement(sql)) {
+    prSt.executeUpdate();
+} catch (SQLException e) {
+    System.out.println(e.getMessage());
+}
 }
 
 public static void main (String[] args) {
-    //delete();
+    delete();
 
-    //update( "bitch", "bottle");
+    //update();
     //insertInDB("human", "Dick");
     Tracker tracker= new Tracker();
-    //tracker.createTable();
-    tracker.add(2000, 3, 28, 0, 1604);
+    tracker.createTable();
+    //tracker.add(2000, 4, 5, 230, 1450);
     //tracker.reportForAPeriod(0, 0, 0, 10000, 100000, 100000);
     //tracker.createBalance (3000);
-    //tracker.addInBalance(100, 70);
+    tracker.sortingTable("profitable");
 
 }
 }
