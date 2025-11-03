@@ -111,10 +111,13 @@ public static void main (String[] args) {
     //insertInDB("human", "Dick");
     Tracker tracker= new Tracker();
     tracker.createTable();
-    //tracker.add(2000, 4, 5, 230, 1450);
+    tracker.add(2001, 1, 5, 400, 1001);
     //tracker.reportForAPeriod(0, 0, 0, 10000, 100000, 100000);
     //tracker.createBalance (3000);
-    tracker.sortingTable("profitable");
+    //tracker.sortingTable("profitable");
+    //tracker.sortingTable("unprofitable","year");
+    tracker.findRow(2000, 5, 4);
+
 
 }
 }
