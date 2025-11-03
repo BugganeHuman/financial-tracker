@@ -9,6 +9,8 @@ import java.sql.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.HashSet;
+import java.util.Set;
 
 class Tracker {
 
@@ -193,16 +195,16 @@ class Tracker {
     public void sortingTable (String sortingOn, String period){
         String url = "jdbc:sqlite:financialDatabase.db";
         String sql = "";
-        if (sortingOn.equals("profitable")) {
-            sql = "SELECT * FROM finance ORDER BY profit DESC";
-        }
-            else if (sortingOn.equals("unprofitable")) {
-            sql = "SELECT * FROM finance ORDER BY profit ASC";
-        }
+
+        if (period.equals("day")) {
+            if (sortingOn.equals("profitable")) {
+                sql = "SELECT * FROM finance ORDER BY profit DESC";
+            } else if (sortingOn.equals("unprofitable")) {
+                sql = "SELECT * FROM finance ORDER BY profit ASC";
+            }
 
 
-
-        try (var conn = DriverManager.getConnection(url);
+            try (var conn = DriverManager.getConnection(url);
                  var prSt = conn.prepareStatement(sql);
                  var rs = prSt.executeQuery();) {
 
@@ -221,6 +223,64 @@ class Tracker {
             } catch (SQLException e) {
                 System.out.println("error in showBalance () " + e.getMessage());
             }
+        }
+        else if (period.equals("year")) {
+
+            if (sortingOn.equals("profitable")) {
+                sql = "SELECT year FROM finance ORDER BY year DESC";
+            } else if (sortingOn.equals("unprofitable")) {
+                sql = "SELECT year FROM finance ORDER BY year ASC";
+            }
+
+            try (var conn = DriverManager.getConnection(url);
+                 var prSt = conn.prepareStatement(sql);
+                 var rs = prSt.executeQuery();) {
+
+                Set <Integer> years = new HashSet<>();
+
+                while (rs.next()) {
+                    years.add(rs.getInt("year"));
+                    System.out.println((rs.getInt("year")));
+                }
+
+
+                for (int year: years) {
+
+                    String sqlInForYears = "SELECT * FROM finance WHERE year = ?";
+                    try(var prStInYears = conn.prepareStatement(sqlInForYears);) {
+                        prStInYears.setInt(1, year);
+                        var rsInYears = prStInYears.executeQuery();
+                        int profitForYear = 0;
+                        while (rsInYears.next()) {
+                            profitForYear += rsInYears.getInt("profit");
+                        }
+                        System.out.println("year " +  year +" - " + profitForYear);
+
+
+                        rsInYears.close();
+                    }catch (SQLException e) {
+                        System.out.println("error in sortingTable (years) in for years, "+e.getMessage());
+                    }
+
+
+                }
+
+
+                // надо для каждого года в years сделать: сначала присвоить переменной count значение итерируемого элемента year, далее
+                // SELECT * FROM finance WHERE year = ? (cюда подставить значение переменной), потом сложить все profit и
+                // записать в переменную profitForYear
+                // и вывести на консоль ("year" +  count " - " + "profitForYear");
+
+
+            } catch (SQLException e) {
+                System.out.println("error in sortingTable(year), " + e.getMessage());
+            }
+
+        }
+
+
+
+
     }
 
 
@@ -266,6 +326,51 @@ public void showTable() {
 }
 
 
+public void deleteRow (int year, int month, int day) {
+        String url = "jdbc:sqlite:financialDatabase.db";
+        String sql = "DELETE FROM finance WHERE year = ? AND month = ? AND day = ?";
+        try (var conn = DriverManager.getConnection(url);
+             var prSt = conn.prepareStatement(sql);   ) {
+            prSt.setInt(1,year);
+            prSt.setInt(2,month);
+            prSt.setInt(3,day);
+            prSt.executeUpdate();
+            rewriteBalanceSumOfProfits();
+        } catch (SQLException e) {
+            System.out.println("error in deleteRow(), "+e.getMessage());
+        }
+}
+
+
+public void findRow(int year, int month, int day) {
+    String url = "jdbc:sqlite:financialDatabase.db";
+    String sql = "SELECT * FROM finance WHERE year = ? AND month = ? AND day = ?";
+    try (var conn = DriverManager.getConnection(url);
+         var prSt = conn.prepareStatement(sql); ) {
+        prSt.setInt(1, year);
+        prSt.setInt(2, month);
+        prSt.setInt(3, day);
+        var rs =  prSt.executeQuery();
+        while (rs.next()) {
+            System.out.printf("Year - %d  Month - %d  Date - %d  expenses - %d  income - %d  profit - %d%n",
+                    rs.getInt("year"),
+                    rs.getInt("month"),
+                    rs.getInt("day"),
+                    rs.getInt("expenses"),
+                    rs.getInt("income"),
+                    rs.getInt("profit"));
+
+
+        }
+
+
+
+        rs.close();
+    } catch ( SQLException e) {
+        System.out.println("error in findRow(), " + e.getMessage());
+    }
+
+}
 
 
 
