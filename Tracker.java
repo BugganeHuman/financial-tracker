@@ -190,16 +190,22 @@ class Tracker {
         }
     }
 
-    public void sortingTable (String sortingOn, String period){ // дописать что бы можно было учитывать периор типа сортировать по (годам, месяцам, дням)
+    public void sortingTable (String sortingOn, String period){
         String url = "jdbc:sqlite:financialDatabase.db";
-        String sql;
-        if (sortingOn.equals("profitable")){
+        String sql = "";
+        if (sortingOn.equals("profitable")) {
             sql = "SELECT * FROM finance ORDER BY profit DESC";
+        }
+            else if (sortingOn.equals("unprofitable")) {
+            sql = "SELECT * FROM finance ORDER BY profit ASC";
+        }
 
 
-            try (var conn = DriverManager.getConnection(url);
+
+        try (var conn = DriverManager.getConnection(url);
                  var prSt = conn.prepareStatement(sql);
                  var rs = prSt.executeQuery();) {
+
                 while (rs.next()) {
                     System.out.printf("Year - %d  Month - %d  Date - %d  expenses - %d  income - %d  profit - %d%n",
                             rs.getInt("year"),
@@ -212,47 +218,57 @@ class Tracker {
                     );
 
                 }
-
-
             } catch (SQLException e) {
-                System.out.println("error in showBalance () "+e.getMessage());
+                System.out.println("error in showBalance () " + e.getMessage());
             }
+    }
 
 
 
-
-        } else if (sortingOn.equals("unprofitable")) {
-            sql = "SELECT * FROM finance ORDER BY profit ASC";
-
-
+    public void rewriteBalanceSumOfProfits () {
+        String url = "jdbc:sqlite:financialDatabase.db";
+        String sql = "SELECT * FROM finance";
         try (var conn = DriverManager.getConnection(url);
              var prSt = conn.prepareStatement(sql);
              var rs = prSt.executeQuery();) {
-
+            int sumProfits = 0;
             while (rs.next()) {
-                System.out.printf("Year - %d  Month - %d  Date - %d  expenses - %d  income - %d  profit - %d%n",
-                        rs.getInt("year"),
-                        rs.getInt("month"),
-                        rs.getInt("day"),
-                        rs.getInt("expenses"),
-                        rs.getInt("income"),
-                        rs.getInt("profit")
-
-                );
-
+                sumProfits += rs.getInt("profit");
             }
-
-
-        } catch (SQLException e) {
-            System.out.println("error in showBalance () "+e.getMessage());
+            createBalance(sumProfits);
+        }catch (SQLException e) {
+            System.out.println ("error in rewriteBalanceSumOfProfits (), " + e.getMessage());
         }
-        }
-
-
-
-
-
     }
+
+public void showTable() {
+    String url = "jdbc:sqlite:financialDatabase.db";
+    String sql = "SELECT * FROM finance";
+    try (var conn = DriverManager.getConnection(url);
+         var prSt = conn.prepareStatement(sql);
+         var rs = prSt.executeQuery();) {
+        while (rs.next()) {
+            System.out.printf("Year - %d  Month - %d  Date - %d  expenses - %d  income - %d  profit - %d%n",
+                    rs.getInt("year"),
+                    rs.getInt("month"),
+                    rs.getInt("day"),
+                    rs.getInt("expenses"),
+                    rs.getInt("income"),
+                    rs.getInt("profit"));
+        }
+
+
+    } catch (SQLException e) {
+        System.out.println("error in showTable(), " + e.getMessage());
+    }
+
+
+}
+
+
+
+
+
 }
 // мне надо методы: 1) создания таблицы,2) добавления данных в таблицу с учетом дубликатов (потом как улучшение можно добавить
 // удаление и прибавление средств с баланса)
