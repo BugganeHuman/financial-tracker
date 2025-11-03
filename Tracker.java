@@ -9,6 +9,7 @@ import java.sql.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -225,6 +226,8 @@ class Tracker {
             }
         }
         else if (period.equals("year")) {
+            ArrayList<Integer> profitOfYears = new ArrayList<>();
+            ArrayList<Integer> arrayOfYears = new ArrayList<>();
 
             if (sortingOn.equals("profitable")) {
                 sql = "SELECT year FROM finance ORDER BY year DESC";
@@ -254,8 +257,15 @@ class Tracker {
                         while (rsInYears.next()) {
                             profitForYear += rsInYears.getInt("profit");
                         }
-                        System.out.println("year " +  year +" - " + profitForYear);
+                        //System.out.println("year " +  year +" - " + profitForYear);
+                            profitOfYears.add(profitForYear);
+                            arrayOfYears.add(year);
 
+                            // надо как то сделать что бы значение year-profitForYear добавлялись в массив,
+                            // там сортировались по profitForYear и принтились
+                            // мб делать так: все профиты годов складывать в массив и сортировать их,
+                            // потом искать год в котором сумма профитов ровна профиты к которому ищем
+                            // и принтить их вместе, и идти дальше (это должен быть цикл)
 
                         rsInYears.close();
                     }catch (SQLException e) {
@@ -265,16 +275,15 @@ class Tracker {
 
                 }
 
-
-                // надо для каждого года в years сделать: сначала присвоить переменной count значение итерируемого элемента year, далее
-                // SELECT * FROM finance WHERE year = ? (cюда подставить значение переменной), потом сложить все profit и
-                // записать в переменную profitForYear
-                // и вывести на консоль ("year" +  count " - " + "profitForYear");
-
-
             } catch (SQLException e) {
                 System.out.println("error in sortingTable(year), " + e.getMessage());
             }
+            // здесь писать
+
+
+
+
+
 
         }
 
@@ -359,12 +368,7 @@ public void findRow(int year, int month, int day) {
                     rs.getInt("expenses"),
                     rs.getInt("income"),
                     rs.getInt("profit"));
-
-
         }
-
-
-
         rs.close();
     } catch ( SQLException e) {
         System.out.println("error in findRow(), " + e.getMessage());
