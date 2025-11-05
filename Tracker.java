@@ -9,9 +9,7 @@ import java.sql.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 class Tracker {
 
@@ -193,7 +191,7 @@ class Tracker {
         }
     }
 
-    public void sortingTable (String sortingOn, String period){
+    public void sortingTable (String sortingOn, String period) {
         String url = "jdbc:sqlite:financialDatabase.db";
         String sql = "";
 
@@ -224,52 +222,51 @@ class Tracker {
             } catch (SQLException e) {
                 System.out.println("error in showBalance () " + e.getMessage());
             }
-        }
-        else if (period.equals("year")) {
-            ArrayList<Integer> profitOfYears = new ArrayList<>();
-            ArrayList<Integer> arrayOfYears = new ArrayList<>();
+        } else if (period.equals("year")) {
+            List<YearProfit> yearsAndProfitsArray = new ArrayList<>();
 
-            if (sortingOn.equals("profitable")) {
+
                 sql = "SELECT year FROM finance ORDER BY year DESC";
-            } else if (sortingOn.equals("unprofitable")) {
-                sql = "SELECT year FROM finance ORDER BY year ASC";
-            }
+
+
+
 
             try (var conn = DriverManager.getConnection(url);
                  var prSt = conn.prepareStatement(sql);
                  var rs = prSt.executeQuery();) {
 
-                Set <Integer> years = new HashSet<>();
+                Set<Integer> years = new HashSet<>();
 
                 while (rs.next()) {
                     years.add(rs.getInt("year"));
-                    System.out.println((rs.getInt("year")));
                 }
 
+                //
 
-                for (int year: years) {
+                for (int year : years) {
 
                     String sqlInForYears = "SELECT * FROM finance WHERE year = ?";
-                    try(var prStInYears = conn.prepareStatement(sqlInForYears);) {
+                    try (var prStInYears = conn.prepareStatement(sqlInForYears);) {
                         prStInYears.setInt(1, year);
                         var rsInYears = prStInYears.executeQuery();
                         int profitForYear = 0;
                         while (rsInYears.next()) {
                             profitForYear += rsInYears.getInt("profit");
                         }
-                        //System.out.println("year " +  year +" - " + profitForYear);
-                            profitOfYears.add(profitForYear);
-                            arrayOfYears.add(year);
 
-                            // надо как то сделать что бы значение year-profitForYear добавлялись в массив,
-                            // там сортировались по profitForYear и принтились
-                            // мб делать так: все профиты годов складывать в массив и сортировать их,
-                            // потом искать год в котором сумма профитов ровна профиты к которому ищем
-                            // и принтить их вместе, и идти дальше (это должен быть цикл)
+
+                        yearsAndProfitsArray.add(new YearProfit(year, profitForYear));
+
+
+                        // надо как то сделать что бы значение year-profitForYear добавлялись в массив,
+                        // там сортировались по profitForYear и принтились
+                        // мб делать так: все профиты годов складывать в массив и сортировать их,
+                        // потом искать год в котором сумма профитов ровна профиту к которому ищем
+                        // и принтить их вместе, и идти дальше (это должен быть цикл)
 
                         rsInYears.close();
-                    }catch (SQLException e) {
-                        System.out.println("error in sortingTable (years) in for years, "+e.getMessage());
+                    } catch (SQLException e) {
+                        System.out.println("error in sortingTable (years) in for years, " + e.getMessage());
                     }
 
 
@@ -279,19 +276,54 @@ class Tracker {
                 System.out.println("error in sortingTable(year), " + e.getMessage());
             }
             // здесь писать
+            Collections.sort(yearsAndProfitsArray, (q, w) -> Integer.compare(q.profit, w.profit));
+            if (sortingOn.equals("unprofitable")) {
+                for (YearProfit elem : yearsAndProfitsArray) {
+                    System.out.println(elem);
+                }
 
 
+            } else if (sortingOn.equals("profitable")) {
+                Collections.reverse(yearsAndProfitsArray);
+                for (YearProfit elem : yearsAndProfitsArray) {
+                    System.out.println(elem);
 
 
+                }
+
+            }
 
 
         }
 
+        else if (period.equals("month")) {
+            // для начала надо что бы просто выводились месяцы (и их год) и их profit
+            // мне надо что был массив с обьектами MonthProfit где строки year, month, profit
+            // потом когда массив наполнен надо сортировать массив по profit (по возрст или убыв в зависимости от выбора)
+            // и принтился отсартированый массив
+            Set<String> setOfMonth = new HashSet<>() ;
+            sql = "SELECT year, month FROM finance";
+            try(var conn = DriverManager.getConnection(url);
+                
+                var prSt = conn.prepareStatement(sql);
+                var rs = prSt.executeQuery();) {
+
+                while (rs.next()) {
+                    System.out.println(" year - "+rs.getInt("year")+" month - "+rs.getInt("month"));
+
+                }
+
+
+            } catch ( SQLException e) {
+                System.out.println("error in sortingTable (month), "+e.getMessage());
+
+
+            }
 
 
 
+        }
     }
-
 
 
     public void rewriteBalanceSumOfProfits () {
