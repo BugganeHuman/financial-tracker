@@ -304,7 +304,7 @@ class Tracker {
             Set<String> setOfMonth = new HashSet<>() ;
             sql = "SELECT year, month FROM finance";
             try(var conn = DriverManager.getConnection(url);
-                
+
                 var prSt = conn.prepareStatement(sql);
                 var rs = prSt.executeQuery();) {
 
