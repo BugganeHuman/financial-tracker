@@ -16,10 +16,10 @@ class Main {
 
     Tracker tracker= new Tracker();
     tracker.createTable();
-    //tracker.add(2001, 1, 5, 400, 1001);
+    //tracker.add(2001, 5, 10, 450, 1050);
     //tracker.reportForAPeriod(0, 0, 0, 10000, 100000, 100000);
     //tracker.createBalance (3000);
-    tracker.sortingTable("unprofitable","month");
+    tracker.sortingTable("profitable","month");
     //tracker.findRow(2000, 5, 4);
 
 
