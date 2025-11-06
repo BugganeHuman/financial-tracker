@@ -296,20 +296,52 @@ class Tracker {
 
         }
 
+
+
+
         else if (period.equals("month")) {
             // для начала надо что бы просто выводились месяцы (и их год) и их profit
             // мне надо что был массив с обьектами MonthProfit где строки year, month, profit
             // потом когда массив наполнен надо сортировать массив по profit (по возрст или убыв в зависимости от выбора)
             // и принтился отсартированый массив
-            Set<String> setOfMonth = new HashSet<>() ;
+
+
+            Set<MonthProfit> setOfMonth = new HashSet<>() ;
+
+
             sql = "SELECT year, month FROM finance";
+
             try(var conn = DriverManager.getConnection(url);
 
                 var prSt = conn.prepareStatement(sql);
                 var rs = prSt.executeQuery();) {
 
                 while (rs.next()) {
-                    System.out.println(" year - "+rs.getInt("year")+" month - "+rs.getInt("month"));
+
+                    //System.out.println(" year - "+rs.getInt("year")+" month - "+rs.getInt("month"));
+                   var sqlSearchMonthProfit = "SELECT profit FROM finance WHERE year = ? AND month = ?";
+
+                    try (var prStSearchMonth = conn.prepareStatement(sqlSearchMonthProfit)) {
+
+                        prStSearchMonth.setInt(1,rs.getInt("year") );
+
+                        prStSearchMonth.setInt(2,rs.getInt("month"));
+
+                      var rsMonthProfit = prStSearchMonth.executeQuery();
+
+                      int profitOfMonth = 0;
+                      while(rsMonthProfit.next()) {
+
+                          profitOfMonth += rsMonthProfit.getInt("profit");
+                      }
+                      setOfMonth.add(new MonthProfit(rs.getInt("year"), rs.getInt("month"), profitOfMonth));
+
+
+
+                    } catch (SQLException e) {
+                        System.out.println("error in sortingTable (month) in while rs.next for search profit of month, "+e.getMessage());
+                    }
+
 
                 }
 
@@ -319,10 +351,16 @@ class Tracker {
 
 
             }
+            for (MonthProfit month: setOfMonth) {
+                System.out.println(month);
+            }
 
 
+            System.out.println(setOfMonth);
 
         }
+
+
     }
 
 
