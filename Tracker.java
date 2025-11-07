@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.sql.*;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -89,7 +88,7 @@ class Tracker {
             prStmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println("error in tracker3 " + e.getMessage());
-        } // надо сделать в начале поиск SELECT * FROM finance WHERE year = ?, month = ?, date = ?
+        }
     }
 
 
@@ -101,9 +100,11 @@ class Tracker {
     public void reportForAPeriod (int startYear, int startMonth, int startDay,
                                          int finishYear, int finishMonth, int finishDay) {
         String url = "jdbc:sqlite:financialDatabase.db";
+
         String sql = "SELECT * FROM finance WHERE year >= ? AND year <= ?" +
                 " AND month >= ? AND month <= ?" +
                 " AND day >= ? AND day <= ?";
+
         try(var conn = DriverManager.getConnection(url); var prSt = conn.prepareStatement(sql);) {
             prSt.setInt(1, startYear);
             prSt.setInt(2, finishYear);
@@ -114,14 +115,12 @@ class Tracker {
             var rs = prSt.executeQuery();
             int allExpenses = 0;
             int allIncome = 0;
-            //allExpenses += rs.getInt("expenses");
-            //allIncome += rs.getInt("income");
+
             while (rs.next()) {
                 allExpenses += rs.getInt("expenses");
                 allIncome += rs.getInt ("income");
             }
             System.out.printf("Expenses - %d%nIncome - %d%n", allExpenses, allIncome);
-
 
             rs.close();
         } catch (SQLException e) {
@@ -149,6 +148,8 @@ class Tracker {
 
 
 
+
+
     public void addInBalance (int expenses, int income) {
         Path pathToFileWithBalance = Path.of("balance.txt");
         try {
@@ -164,6 +165,9 @@ class Tracker {
         }
 
     }
+
+
+
 
 
     public void reduceInBalance (int expenses, int income) {
@@ -182,6 +186,10 @@ class Tracker {
 
     }
 
+
+
+
+
     public void showBalance () {
         Path pathToFileWithBalance = Path.of("balance.txt");
 
@@ -193,6 +201,10 @@ class Tracker {
             System.out.println("error in showBalance(), "+e.getMessage());
         }
     }
+
+
+
+
 
     public void sortingTable (String sortingOn, String period) {
         String url = "jdbc:sqlite:financialDatabase.db";
@@ -228,11 +240,7 @@ class Tracker {
         } else if (period.equals("year")) {
             List<YearProfit> yearsAndProfitsArray = new ArrayList<>();
 
-
                 sql = "SELECT year FROM finance ORDER BY year DESC";
-
-
-
 
             try (var conn = DriverManager.getConnection(url);
                  var prSt = conn.prepareStatement(sql);
@@ -244,7 +252,7 @@ class Tracker {
                     years.add(rs.getInt("year"));
                 }
 
-                //
+
 
                 for (int year : years) {
 
@@ -257,29 +265,21 @@ class Tracker {
                             profitForYear += rsInYears.getInt("profit");
                         }
 
-
                         yearsAndProfitsArray.add(new YearProfit(year, profitForYear));
-
-
-                        // надо как то сделать что бы значение year-profitForYear добавлялись в массив,
-                        // там сортировались по profitForYear и принтились
-                        // мб делать так: все профиты годов складывать в массив и сортировать их,
-                        // потом искать год в котором сумма профитов ровна профиту к которому ищем
-                        // и принтить их вместе, и идти дальше (это должен быть цикл)
 
                         rsInYears.close();
                     } catch (SQLException e) {
                         System.out.println("error in sortingTable (years) in for years, " + e.getMessage());
                     }
-
-
                 }
+
 
             } catch (SQLException e) {
                 System.out.println("error in sortingTable(year), " + e.getMessage());
             }
-            // здесь писать
+
             Collections.sort(yearsAndProfitsArray, (q, w) -> Integer.compare(q.profit, w.profit));
+
             if (sortingOn.equals("unprofitable")) {
                 for (YearProfit elem : yearsAndProfitsArray) {
                     System.out.println(elem);
@@ -291,22 +291,14 @@ class Tracker {
                 for (YearProfit elem : yearsAndProfitsArray) {
                     System.out.println(elem);
 
-
                 }
-
             }
-
-
         }
 
 
 
 
         else if (period.equals("month")) {
-            // для начала надо что бы просто выводились месяцы (и их год) и их profit
-            // мне надо что был массив с обьектами MonthProfit где строки year, month, profit
-            // потом когда массив наполнен надо сортировать массив по profit (по возрст или убыв в зависимости от выбора)
-            // и принтился отсартированый массив
 
 
             Set<MonthProfit> setOfMonth = new HashSet<>() ;
@@ -321,7 +313,7 @@ class Tracker {
 
                 while (rs.next()) {
 
-                    //System.out.println(" year - "+rs.getInt("year")+" month - "+rs.getInt("month"));
+
                    var sqlSearchMonthProfit = "SELECT profit FROM finance WHERE year = ? AND month = ?";
 
                     try (var prStSearchMonth = conn.prepareStatement(sqlSearchMonthProfit)) {
@@ -344,16 +336,13 @@ class Tracker {
                     } catch (SQLException e) {
                         System.out.println("error in sortingTable (month) in while rs.next for search profit of month, "+e.getMessage());
                     }
-
-
                 }
 
 
             } catch ( SQLException e) {
                 System.out.println("error in sortingTable (month), "+e.getMessage());
-
-
             }
+
             List <MonthProfit> monthProfitsArray = new ArrayList<>(setOfMonth);
 
             Collections.sort(monthProfitsArray, (q, w) -> Integer.compare(q.profit, w.profit));
@@ -369,14 +358,11 @@ class Tracker {
             }
 
             }
-
-
-            System.out.println(setOfMonth);
-
         }
-
-
     }
+
+
+
 
 
     public void rewriteBalanceSumOfProfits () {
@@ -394,6 +380,10 @@ class Tracker {
             System.out.println ("error in rewriteBalanceSumOfProfits (), " + e.getMessage());
         }
     }
+
+
+
+
 
 public void showTable() {
     String url = "jdbc:sqlite:financialDatabase.db";
@@ -415,9 +405,10 @@ public void showTable() {
     } catch (SQLException e) {
         System.out.println("error in showTable(), " + e.getMessage());
     }
-
-
 }
+
+
+
 
 
 public void deleteRow (int year, int month, int day) {
@@ -434,6 +425,9 @@ public void deleteRow (int year, int month, int day) {
             System.out.println("error in deleteRow(), "+e.getMessage());
         }
 }
+
+
+
 
 
 public void findRow(int year, int month, int day) {
@@ -460,6 +454,11 @@ public void findRow(int year, int month, int day) {
     }
 
 }
+
+
+
+
+
 public void createBackup (String path) {
 Path pathToBackup = Path.of(path);
 try {
@@ -476,20 +475,5 @@ Files.createDirectories(pathToBackup.getParent());
 }catch (IOException e) {
     System.out.println("error in backup (), " + e.getMessage());
 }
-
 }
-
-
-
 }
-// мне надо методы: 1) создания таблицы,2) добавления данных в таблицу с учетом дубликатов (потом как улучшение можно добавить
-// удаление и прибавление средств с баланса)
-// 3) просмотр отчета за переод времени
-// (юзер вводит началоьную дату и конечную, и надо вывести сколько накопил и сколько потратил,
-// потом как улучшение надо добавить сортировку по самым прибыльным/убыточным дням),
-// 4) сортировка таблицы по самым прибыльным/убыточным  дням/месяцам/годам,
-//5) метод редактирования/удаления/просмотра (юзер вводит дату и может с ней зделать что ему надо -
-// удалить, отредактировать или просто посмотреть и закрыть)
-// 6) метод что бы юзер в начале пользования программой, ввел свой текущий риальный баланс, и что бы от него отталкиватся
-// 6.1) метод показыть баланс
-// 7) функция бэкапа - файл .db переносится на указанный путь
