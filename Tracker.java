@@ -3,6 +3,7 @@ package org.example;
 
 
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.sql.*;
 
@@ -25,6 +26,8 @@ class Tracker {
                 "income INTEGER," +
                 "profit INTEGER" +
                 ");";
+        createBalance(0);
+        rewriteBalanceSumOfProfits();
         try (var connection = DriverManager.getConnection(url); var statement = connection.createStatement();) {
             statement.execute(sql);
         } catch (SQLException e) {
@@ -455,6 +458,24 @@ public void findRow(int year, int month, int day) {
     } catch ( SQLException e) {
         System.out.println("error in findRow(), " + e.getMessage());
     }
+
+}
+public void createBackup (String path) {
+Path pathToBackup = Path.of(path);
+try {
+Files.createDirectories(pathToBackup.getParent());
+    if (!Files.exists(pathToBackup)) {
+        Files.createFile(pathToBackup);
+        try {
+            Files.copy(Path.of("financialDatabase.db"), pathToBackup, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            System.out.println("error in copy backup, "+e.getMessage());
+        }
+    }
+
+}catch (IOException e) {
+    System.out.println("error in backup (), " + e.getMessage());
+}
 
 }
 
