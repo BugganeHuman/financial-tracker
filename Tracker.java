@@ -351,8 +351,20 @@ class Tracker {
 
 
             }
-            for (MonthProfit month: setOfMonth) {
+            List <MonthProfit> monthProfitsArray = new ArrayList<>(setOfMonth);
+
+            Collections.sort(monthProfitsArray, (q, w) -> Integer.compare(q.profit, w.profit));
+            if (sortingOn.equals("profitable")) {
+                Collections.reverse(monthProfitsArray);
+                for (MonthProfit month: monthProfitsArray) {
+                    System.out.println(month);
+                }
+
+            }else if (sortingOn.equals("unprofitable")) {
+            for (MonthProfit month: monthProfitsArray) {
                 System.out.println(month);
+            }
+
             }
 
 
