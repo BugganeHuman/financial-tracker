@@ -70,7 +70,6 @@ class Tracker {
                 }
                 else {
                     rs.close();
-                    System.out.println("fine");
                 }
             }
         } catch (SQLException e) {
@@ -392,7 +391,7 @@ public void showTable() {
          var prSt = conn.prepareStatement(sql);
          var rs = prSt.executeQuery();) {
         while (rs.next()) {
-            System.out.printf("Year - %d  Month - %d  Date - %d  expenses - %d  income - %d  profit - %d%n",
+            System.out.printf("Year - %d  Month - %d  Date - %d  expenses - %d  income - %d  profit - %d%n%n",
                     rs.getInt("year"),
                     rs.getInt("month"),
                     rs.getInt("day"),
