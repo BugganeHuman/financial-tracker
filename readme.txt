@@ -1,1 +1,1 @@
-java 21
+you need java 21 for using this programm
