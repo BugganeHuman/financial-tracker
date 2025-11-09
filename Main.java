@@ -3,15 +3,30 @@ package org.example;
 
 
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.*;
 import java.util.Scanner;
 
 
 class Main {
     public static void main (String[] args) {
+        Scanner input = new Scanner(System.in);
         Tracker tracker = new Tracker();
         tracker.createTable();
-        Scanner input = new Scanner(System.in);
+        Path pathToBalance = Path.of("balance.txt");
+        try {
+            if (!Files.exists(pathToBalance)) {
+                System.out.print("Enter the amount you already have on your balance, if your balance is empty, enter 0\n" +
+                                "                                           ");
+                String amountBalance = input.next();
+                input.nextLine();
+                tracker.createBalance(Integer.parseInt(amountBalance));
+                System.out.println("Balance created\n");
+            }
+        }catch (Throwable e) {
+            System.out.println("error, "+e.getMessage());
+        }
         System.out.println("write something (-readme, -help)");
         while (true) {
         System.out.print("\npress :\n" +
@@ -87,15 +102,174 @@ class Main {
             else if (actRecordsChoice.equals("1")) {
                 tracker.showTable();
             }
-            else if (actRecordsChoice.equals("2")) {
+            else if (actRecordsChoice.equals("2")) { //  РАБОТАЕТ НЕ КОРЕКТНО, НАДО ПОЧЕНИТЬ
+                while (true) {
+                System.out.println("\nPress |0| - to return");
+                System.out.print("Enter the start date for report, separated by a space\n" +
+                                "                       ");
+                String startDateReport = input.nextLine();
+                if (startDateReport.equals("0")) {
+                    break;
+                }
+                System.out.print("\nEnter the finish date for report, separated by a space\n" +
+                                "                       ");
+                String finishDateReport = input.nextLine();
+                String [] startDateArray = startDateReport.split(" ");
+                String [] finishDateArray = finishDateReport.split(" ");
+                int startYear = Integer.parseInt(startDateArray[0]);
+                int startMonth = Integer.parseInt(startDateArray[1]);
+                int startDay = Integer.parseInt(startDateArray[2]);
+                int finishYear = Integer.parseInt(finishDateArray[0]);
+                int finishMonth = Integer.parseInt(finishDateArray[1]);
+                int finishDay = Integer.parseInt(finishDateArray[2]);
+                try {
+                    tracker.reportForAPeriod(startYear, startMonth, startDay, finishYear, finishMonth, finishDay);
+                    break;
+                } catch (Throwable e) {
+                    System.out.println("\nError, " + e.getMessage());
+                    break;
+                }
 
-                // ПРОДОЛЖАЮ ПИСАТЬ ЗДЕСЬ
+                }
+
+
+            }
+            else if (actRecordsChoice.equals("3")) {
+                while (true) {
+                    System.out.println("Press |0| - to return");
+                    System.out.print("Press |1| - sorting to years, |2| - sorting to months, |3| - sorting to days\n" +
+                                    "                                      ");
+                    String periodSort = input.next();
+                    input.nextLine();
+                    String period = "";
+                    if (periodSort.equals("0")) {
+                        break;
+                    } else if (periodSort.equals("1")) {
+                        period = "year";
+                    }else if (periodSort.equals("2")) {
+                        period = "month";
+                    }else if (periodSort.equals("3")) {
+                        period = "day";
+                    }
+                    System.out.print("Press |1| - to sorting on profitable, |2| - sorting on unprofitable\n" +
+                                    "                                       ");
+                    String sortingOnChoice = input.next();
+                    input.nextLine();
+                    String sortingOn = "";
+                    if (sortingOnChoice.equals("1")) {
+                        sortingOn = "profitable";
+                    }else if (sortingOnChoice.equals("2")) {
+                        sortingOn = "unprofitable";
+                    }
+                    try {
+                    tracker.sortingTable(sortingOn, period);
+                        break;
+                    }catch (Throwable e) {
+                        System.out.println("error, "+e.getMessage());
+                        break;
+                    }
+
+
+                }
+
+
+            }
+            else if (actRecordsChoice.equals("4")) {
+                while (true) {
+                    System.out.println("Press |0| - to return");
+                    System.out.print("Enter the date which record you want to find, separated by a space\n" +
+                                    "                           ");
+                    String findDate = input.nextLine();
+                    if (findDate.equals("0")) {break;}
+                    String[] findDateArray = findDate.split(" ");
+                    int year = Integer.parseInt(findDateArray[0]);
+                    int month = Integer.parseInt(findDateArray[1]);
+                    int day = Integer.parseInt(findDateArray[2]);
+
+                    try {
+                        tracker.findRow(year, month, day);
+                        break;
+                    } catch (Throwable e) {
+                        System.out.println("Error, "+e.getMessage() +"\n");
+                        break;
+                    }
+
+
+
+
+
+
+
+                }
+
+
+
+            }
+
+            else if (actRecordsChoice.equals("5")) {
+                while (true) {
+                    System.out.println("Press |0| - to return");
+                    System.out.print("Enter the date which record you want to delete, separated by a space\n" +
+                            "                           ");
+                    String deleteDate = input.nextLine();
+                    if (deleteDate.equals("0")) {break;}
+                    String[] deleteDateArray = deleteDate.split(" ");
+                    int year = Integer.parseInt(deleteDateArray[0]);
+                    int month = Integer.parseInt(deleteDateArray[1]);
+                    int day = Integer.parseInt(deleteDateArray[2]);
+
+                    try {
+                    tracker.deleteRow(year, month, day);
+                    System.out.println("the record deleted");
+                        break;
+                    }catch (Throwable e) {
+                        System.out.println("error, "+e.getMessage());
+                        break;
+                    }
+
+
+                }
             }
 
             }
         }
 
+        else if (mainMenuChoice.equals("3")) {
+            while (true) {
+            System.out.print("\npress:" +
+                    "\n0 - to return\n\n" +
+                    "1 - show balance\n\n" +
+                    "2 - rewrite balance sum of profits\n\n" +
+                    "3 - add in balance\n" +
+                    "                       ");
+            String choiceInBalanceOptions = input.next();
+            input.nextLine();
+            if (choiceInBalanceOptions.equals("0")) {break;}
+            else if (choiceInBalanceOptions.equals("1")) {tracker.showBalance();}
+            else if (choiceInBalanceOptions.equals("2")) {tracker.rewriteBalanceSumOfProfits();System.out.println("\nDone\n");}
+            else if (choiceInBalanceOptions.equals("3")) {
+                while (true) {
+                    System.out.println("Press |0| - to return");
+                    System.out.print("write the amount you need to add\n" +
+                                    "               ");
+                    String amountAdd = input.next();
+                    input.nextLine();
+                    if (amountAdd.equals("0")) {break;}
+                    try {
+                        tracker.addInBalance(0,Integer.parseInt(amountAdd));
+                        System.out.println ("\nDone\n");
+                        break;
+                    }catch (Throwable e) {
+                        System.out.println("error, "+e.getMessage());
+                    }
 
+                }
+            }
+
+
+            }
+
+        }
 
 
 
@@ -123,6 +297,22 @@ class Main {
 
         }
 
+
+
+else if (mainMenuChoice.equals("-readme")) {
+    System.out.println("Hi dude, it is simply financial-tracker, \n" +
+                        "I did it for me, if you don't like something \n" +
+                        "you can rewrite by yourself, because it is opensource\n" +
+                        "link to repository https://github.com/BugganeHuman/financial-tracker\n" +
+                            "                   enjoy using it :)");
+
+        }
+
+
+
+else if (mainMenuChoice.equals("-help")) {
+            // продожая здесь
+        }
 
 
         }
