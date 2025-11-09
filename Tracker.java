@@ -25,8 +25,8 @@ class Tracker {
                 "income INTEGER," +
                 "profit INTEGER" +
                 ");";
-        createBalance(0);
-        rewriteBalanceSumOfProfits();
+
+
         try (var connection = DriverManager.getConnection(url); var statement = connection.createStatement();) {
             statement.execute(sql);
         } catch (SQLException e) {
@@ -194,7 +194,7 @@ class Tracker {
 
         try {
             String balance = Files.readString(pathToFileWithBalance);
-            System.out.println(Integer.parseInt(balance));
+            System.out.println("\nBalance now - "+Integer.parseInt(balance)+"\n");
 
         } catch (IOException e) {
             System.out.println("error in showBalance(), "+e.getMessage());
@@ -222,7 +222,7 @@ class Tracker {
                  var rs = prSt.executeQuery();) {
 
                 while (rs.next()) {
-                    System.out.printf("Year - %d  Month - %d  Date - %d  expenses - %d  income - %d  profit - %d%n",
+                    System.out.printf("Year - %d  Month - %d  Date - %d  expenses - %d  income - %d  profit - %d%n%n",
                             rs.getInt("year"),
                             rs.getInt("month"),
                             rs.getInt("day"),
@@ -281,14 +281,14 @@ class Tracker {
 
             if (sortingOn.equals("unprofitable")) {
                 for (YearProfit elem : yearsAndProfitsArray) {
-                    System.out.println(elem);
+                    System.out.println(elem+"\n");
                 }
 
 
             } else if (sortingOn.equals("profitable")) {
                 Collections.reverse(yearsAndProfitsArray);
                 for (YearProfit elem : yearsAndProfitsArray) {
-                    System.out.println(elem);
+                    System.out.println(elem+"\n");
 
                 }
             }
@@ -348,12 +348,12 @@ class Tracker {
             if (sortingOn.equals("profitable")) {
                 Collections.reverse(monthProfitsArray);
                 for (MonthProfit month: monthProfitsArray) {
-                    System.out.println(month);
+                    System.out.println(month+"\n");
                 }
 
             }else if (sortingOn.equals("unprofitable")) {
             for (MonthProfit month: monthProfitsArray) {
-                System.out.println(month);
+                System.out.println(month+"\n");
             }
 
             }
@@ -439,7 +439,7 @@ public void findRow(int year, int month, int day) {
         prSt.setInt(3, day);
         var rs =  prSt.executeQuery();
         while (rs.next()) {
-            System.out.printf("Year - %d  Month - %d  Date - %d  expenses - %d  income - %d  profit - %d%n",
+            System.out.printf("%nYear - %d  Month - %d  Date - %d  expenses - %d  income - %d  profit - %d%n",
                     rs.getInt("year"),
                     rs.getInt("month"),
                     rs.getInt("day"),
