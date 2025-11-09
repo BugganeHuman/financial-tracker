@@ -27,7 +27,7 @@ class Main {
         }catch (Throwable e) {
             System.out.println("error, "+e.getMessage());
         }
-        System.out.println("write something (-readme, -help)");
+        System.out.println("you can write -readme or -help");
         while (true) {
         System.out.print("\npress :\n" +
                 "0 - exit\n\n" +
@@ -102,6 +102,12 @@ class Main {
             else if (actRecordsChoice.equals("1")) {
                 tracker.showTable();
             }
+
+
+
+
+
+
             else if (actRecordsChoice.equals("2")) { //  РАБОТАЕТ НЕ КОРЕКТНО, НАДО ПОЧЕНИТЬ
                 while (true) {
                 System.out.println("\nPress |0| - to return");
@@ -131,6 +137,9 @@ class Main {
                 }
 
                 }
+
+
+
 
 
             }
@@ -300,7 +309,8 @@ class Main {
 
 
 else if (mainMenuChoice.equals("-readme")) {
-    System.out.println("Hi dude, it is simply financial-tracker, \n" +
+    System.out.println("\nHi dude, it is simply financial-tracker, \n" +
+                        "which uses SQLite, for keeping your records\n" +
                         "I did it for me, if you don't like something \n" +
                         "you can rewrite by yourself, because it is opensource\n" +
                         "link to repository https://github.com/BugganeHuman/financial-tracker\n" +
@@ -311,7 +321,14 @@ else if (mainMenuChoice.equals("-readme")) {
 
 
 else if (mainMenuChoice.equals("-help")) {
-            // продожая здесь
+            System.out.println("\nErrors which can be come and how fix their:\n" +
+                                "1-In the backup method, you need to enter the path without quotes and in the uppercase\n" +
+                                "2-Dates must be written without leading zeros, for example: 2000 1 9\n" +
+                                "3-The numbers in | | mean that if you enter these numbers, what is written will happen\n" +
+                                "4-If your balance is somehow broken, you can use the |rewrite balance sum of profits method|,\n" +
+                                "  This will overwrite the balance with the sum of all profits in the database, after that,\n" +
+                                "  you can use the |add in balance| method to add funds that were already on the balance before using the tracker" );
+
         }
 
 
