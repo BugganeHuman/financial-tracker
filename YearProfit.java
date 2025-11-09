@@ -9,12 +9,11 @@ public class YearProfit {
         this.profit = profit;
     }
 
-    // IT WILL NEED TO REWRITE
+    
     @Override
     public String toString() {
         return "year " + year + " - " + "profit " + profit;
     }
-
-
-
+    
 }
+
