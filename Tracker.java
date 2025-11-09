@@ -9,6 +9,7 @@ import java.sql.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.LocalDate;
 import java.util.*;
 
 class Tracker {
@@ -30,7 +31,7 @@ class Tracker {
         try (var connection = DriverManager.getConnection(url); var statement = connection.createStatement();) {
             statement.execute(sql);
         } catch (SQLException e) {
-            System.out.println("error in tracker1 " + e.getMessage());
+            System.out.println("Error in createTable () " + e.getMessage());
         }
     }
 
@@ -65,7 +66,7 @@ class Tracker {
                         return;
 
                     } catch (SQLException e) {
-                        System.out.println("error in UPDATE "+e.getMessage());
+                        System.out.println("Error in UPDATE "+e.getMessage());
                     }
                 }
                 else {
@@ -73,7 +74,7 @@ class Tracker {
                 }
             }
         } catch (SQLException e) {
-            System.out.println("error in tracker2 " + e.getMessage() + e.getErrorCode() );
+            System.out.println("Error in in add()2 " + e.getMessage() + e.getErrorCode() );
         }
         String sql = "INSERT INTO finance (year, month, day, expenses, income, profit) VALUES (?,?,?,?,?,?)";
         addInBalance(expenses,income);
@@ -86,44 +87,45 @@ class Tracker {
             prStmt.setInt(6, income - expenses);
             prStmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("error in tracker3 " + e.getMessage());
+            System.out.println("Error in add()3 " + e.getMessage());
         }
     }
 
 
 
 
-    // надо что бы перебирал все года но допустим - start 2000 5 23 end 2003 8 11, и он должен начать перебирать так -
-    // в первом году он перебирает начаная с указаного месяца и дня, и в последнем он пиребирает до указаного месяца и дня
-    // а все годо которые между первым и последним он перебирает полнастью.
+    // даты которые принимает метод записываются в две переменные startDate и finishDate
+    // потом цикл проходит в диапозоне между этими датами, и на каждой итерации ищет в бд эту дату
+    // если находит - записывает его профит, расходы, доходы в общие переменные
     public void reportForAPeriod (int startYear, int startMonth, int startDay,
                                          int finishYear, int finishMonth, int finishDay) { // РАБОТАЕТ НЕ КОРЕКТНО
         String url = "jdbc:sqlite:financialDatabase.db";
 
-        String sql = "SELECT * FROM finance WHERE year >= ? AND year <= ?" +
-                " AND month >= ? AND month <= ?" +
-                " AND day >= ? AND day <= ?";
+        String sql = "SELECT * FROM finance WHERE year >= ? AND year <= ?";
+
 
         try(var conn = DriverManager.getConnection(url); var prSt = conn.prepareStatement(sql);) {
             prSt.setInt(1, startYear);
             prSt.setInt(2, finishYear);
-            prSt.setInt(3, startMonth);
-            prSt.setInt(4, finishMonth);
-            prSt.setInt(5, startDay);
-            prSt.setInt(6, finishDay);
+            LocalDate startDate = LocalDate.of(startYear, startMonth, startDay);
+            LocalDate finishDate = LocalDate.of(finishYear, finishMonth, finishDay);
+
             var rs = prSt.executeQuery();
             int allExpenses = 0;
             int allIncome = 0;
-
+            int counterFinish = 0;
             while (rs.next()) {
-                allExpenses += rs.getInt("expenses");
-                allIncome += rs.getInt ("income");
+                counterFinish++;
             }
-            System.out.printf("Expenses - %d%nIncome - %d%n", allExpenses, allIncome);
+
+
+                //allExpenses += rs.getInt("expenses");
+                //allIncome += rs.getInt ("income");
+            //System.out.printf("Expenses - %d%nIncome - %d%n", allExpenses, allIncome);
 
             rs.close();
         } catch (SQLException e) {
-            System.out.println("error in reportForAPeriod " + e.getMessage());
+            System.out.println("Error in reportForAPeriod, " + e.getMessage());
         }
 
     }
@@ -197,7 +199,7 @@ class Tracker {
             System.out.println("\nBalance now - "+Integer.parseInt(balance)+"\n");
 
         } catch (IOException e) {
-            System.out.println("error in showBalance(), "+e.getMessage());
+            System.out.println("Error in showBalance(), "+e.getMessage());
         }
     }
 
@@ -268,13 +270,13 @@ class Tracker {
 
                         rsInYears.close();
                     } catch (SQLException e) {
-                        System.out.println("error in sortingTable (years) in for years, " + e.getMessage());
+                        System.out.println("Error in sortingTable (years) in for years, " + e.getMessage());
                     }
                 }
 
 
             } catch (SQLException e) {
-                System.out.println("error in sortingTable(year), " + e.getMessage());
+                System.out.println("Error in sortingTable(year), " + e.getMessage());
             }
 
             Collections.sort(yearsAndProfitsArray, (q, w) -> Integer.compare(q.profit, w.profit));
@@ -333,13 +335,13 @@ class Tracker {
 
 
                     } catch (SQLException e) {
-                        System.out.println("error in sortingTable (month) in while rs.next for search profit of month, "+e.getMessage());
+                        System.out.println("Error in sortingTable (month) in while rs.next for search profit of month, "+e.getMessage());
                     }
                 }
 
 
             } catch ( SQLException e) {
-                System.out.println("error in sortingTable (month), "+e.getMessage());
+                System.out.println("Error in sortingTable (month), "+e.getMessage());
             }
 
             List <MonthProfit> monthProfitsArray = new ArrayList<>(setOfMonth);
@@ -376,7 +378,7 @@ class Tracker {
             }
             createBalance(sumProfits);
         }catch (SQLException e) {
-            System.out.println ("error in rewriteBalanceSumOfProfits (), " + e.getMessage());
+            System.out.println ("Error in rewriteBalanceSumOfProfits (), " + e.getMessage());
         }
     }
 
@@ -402,7 +404,7 @@ public void showTable() {
 
 
     } catch (SQLException e) {
-        System.out.println("error in showTable(), " + e.getMessage());
+        System.out.println("Error in showTable(), " + e.getMessage());
     }
 }
 
@@ -421,7 +423,7 @@ public void deleteRow (int year, int month, int day) {
             prSt.executeUpdate();
             rewriteBalanceSumOfProfits();
         } catch (SQLException e) {
-            System.out.println("error in deleteRow(), "+e.getMessage());
+            System.out.println("Error in deleteRow(), "+e.getMessage());
         }
 }
 
@@ -438,6 +440,9 @@ public void findRow(int year, int month, int day) {
         prSt.setInt(2, month);
         prSt.setInt(3, day);
         var rs =  prSt.executeQuery();
+        if (rs.next() == false ) {
+            System.out.println("\nnothing found");
+        }
         while (rs.next()) {
             System.out.printf("%nYear - %d  Month - %d  Date - %d  expenses - %d  income - %d  profit - %d%n",
                     rs.getInt("year"),
@@ -447,9 +452,13 @@ public void findRow(int year, int month, int day) {
                     rs.getInt("income"),
                     rs.getInt("profit"));
         }
+
+
+
+
         rs.close();
     } catch ( SQLException e) {
-        System.out.println("error in findRow(), " + e.getMessage());
+        System.out.println("Error in findRow(), " + e.getMessage());
     }
 
 }
@@ -467,12 +476,12 @@ Files.createDirectories(pathToBackup.getParent());
         try {
             Files.copy(Path.of("financialDatabase.db"), pathToBackup, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            System.out.println("error in copy backup, "+e.getMessage());
+            System.out.println("Error in copy backup, "+e.getMessage());
         }
     }
 
 }catch (IOException e) {
-    System.out.println("error in backup (), " + e.getMessage());
+    System.out.println("Error in backup (), " + e.getMessage());
 }
 }
 }
