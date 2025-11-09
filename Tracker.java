@@ -93,11 +93,11 @@ class Tracker {
 
 
 
-
-
-
+    // надо что бы перебирал все года но допустим - start 2000 5 23 end 2003 8 11, и он должен начать перебирать так -
+    // в первом году он перебирает начаная с указаного месяца и дня, и в последнем он пиребирает до указаного месяца и дня
+    // а все годо которые между первым и последним он перебирает полнастью.
     public void reportForAPeriod (int startYear, int startMonth, int startDay,
-                                         int finishYear, int finishMonth, int finishDay) {
+                                         int finishYear, int finishMonth, int finishDay) { // РАБОТАЕТ НЕ КОРЕКТНО
         String url = "jdbc:sqlite:financialDatabase.db";
 
         String sql = "SELECT * FROM finance WHERE year >= ? AND year <= ?" +
