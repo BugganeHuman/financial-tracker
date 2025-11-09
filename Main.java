@@ -25,7 +25,7 @@ class Main {
                 System.out.println("Balance created\n");
             }
         }catch (Throwable e) {
-            System.out.println("error, "+e.getMessage());
+            System.out.println("Error, "+e.getMessage());
         }
         System.out.println("\nyou can write -readme or -help");
         while (true) {
@@ -34,7 +34,7 @@ class Main {
                 "1 - add the record\n\n" +
                 "2 - actions with records\n\n" +
                 "3 - actions with balance\n\n" +
-                "4 - create backup\n" +
+                "4 - create a backup\n" +
                 "                     ");
         String mainMenuChoice = input.next();
             input.nextLine();
@@ -60,8 +60,9 @@ class Main {
                 break;
             }
 
-            String[] dateArray = dateString.split(" ");
 
+            try {
+            String[] dateArray = dateString.split(" ");
             int year = Integer.parseInt(dateArray[0]);
 
             int month = Integer.parseInt(dateArray[1]);
@@ -70,11 +71,10 @@ class Main {
             String expenses = input.next();
             System.out.print("Write income: ");
             String income = input.next();
-            try {
                 tracker.add(year, month, day, Integer.parseInt(expenses), Integer.parseInt(income));
                 System.out.println("\nrecord added");
             } catch (Throwable e) {
-                System.out.println("error, " + e.getMessage());
+                System.out.println("Error, " + e.getMessage());
             }
             break;
             }
@@ -90,7 +90,7 @@ class Main {
                     "1 - show all records\n\n" +
                     "2 - report for a period\n\n" +
                     "3 - sort records\n\n" +
-                    "4 - find record\n\n" +
+                    "4 - find a record\n\n" +
                     "5 - delete record\n" +
                     "                   ");
             String actRecordsChoice = input.next();
@@ -120,6 +120,7 @@ class Main {
                 System.out.print("\nEnter the finish date for report, separated by a space\n" +
                                 "                       ");
                 String finishDateReport = input.nextLine();
+                try {
                 String [] startDateArray = startDateReport.split(" ");
                 String [] finishDateArray = finishDateReport.split(" ");
                 int startYear = Integer.parseInt(startDateArray[0]);
@@ -128,7 +129,6 @@ class Main {
                 int finishYear = Integer.parseInt(finishDateArray[0]);
                 int finishMonth = Integer.parseInt(finishDateArray[1]);
                 int finishDay = Integer.parseInt(finishDateArray[2]);
-                try {
                     tracker.reportForAPeriod(startYear, startMonth, startDay, finishYear, finishMonth, finishDay);
                     break;
                 } catch (Throwable e) {
@@ -159,6 +159,9 @@ class Main {
                         period = "month";
                     }else if (periodSort.equals("3")) {
                         period = "day";
+                    } else {
+                        System.out.println("\nIncorrect number\n");
+                        break;
                     }
                     System.out.print("Press |1| - to sorting on profitable, |2| - sorting on unprofitable\n" +
                                     "                                       ");
@@ -169,12 +172,15 @@ class Main {
                         sortingOn = "profitable";
                     }else if (sortingOnChoice.equals("2")) {
                         sortingOn = "unprofitable";
+                    } else {
+                        System.out.println("\nIncorrect number\n");
+                        break;
                     }
                     try {
                     tracker.sortingTable(sortingOn, period);
                         break;
                     }catch (Throwable e) {
-                        System.out.println("error, "+e.getMessage());
+                        System.out.println("Error, "+e.getMessage());
                         break;
                     }
 
@@ -191,11 +197,11 @@ class Main {
                     String findDate = input.nextLine();
                     if (findDate.equals("0")) {break;}
                     String[] findDateArray = findDate.split(" ");
+
+                    try {
                     int year = Integer.parseInt(findDateArray[0]);
                     int month = Integer.parseInt(findDateArray[1]);
                     int day = Integer.parseInt(findDateArray[2]);
-
-                    try {
                         tracker.findRow(year, month, day);
                         break;
                     } catch (Throwable e) {
@@ -203,17 +209,11 @@ class Main {
                         break;
                     }
 
-
-
-
-
-
-
                 }
 
-
-
             }
+
+
 
             else if (actRecordsChoice.equals("5")) {
                 while (true) {
@@ -223,16 +223,16 @@ class Main {
                     String deleteDate = input.nextLine();
                     if (deleteDate.equals("0")) {break;}
                     String[] deleteDateArray = deleteDate.split(" ");
+
+                    try {
                     int year = Integer.parseInt(deleteDateArray[0]);
                     int month = Integer.parseInt(deleteDateArray[1]);
                     int day = Integer.parseInt(deleteDateArray[2]);
-
-                    try {
                     tracker.deleteRow(year, month, day);
                     System.out.println("the record deleted");
                         break;
                     }catch (Throwable e) {
-                        System.out.println("error, "+e.getMessage());
+                        System.out.println("Error, "+e.getMessage());
                         break;
                     }
 
@@ -269,7 +269,8 @@ class Main {
                         System.out.println ("\nDone\n");
                         break;
                     }catch (Throwable e) {
-                        System.out.println("error, "+e.getMessage());
+                        System.out.println("\nError, "+e.getMessage());
+                        break;
                     }
 
                 }
@@ -297,7 +298,7 @@ class Main {
                     break;
 
                 }catch (Throwable e) {
-                    System.out.print("\nerror, "+e.getMessage() + "\n");
+                    System.out.print("\nError, "+e.getMessage() + "\n");
                     break;
                 }
 
@@ -333,9 +334,6 @@ else if (mainMenuChoice.equals("-help")) {
 
 
         }
-
-
-
 
 }
 }
