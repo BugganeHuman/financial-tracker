@@ -27,11 +27,11 @@ class Main {
         }catch (Throwable e) {
             System.out.println("error, "+e.getMessage());
         }
-        System.out.println("you can write -readme or -help");
+        System.out.println("\nyou can write -readme or -help");
         while (true) {
         System.out.print("\npress :\n" +
                 "0 - exit\n\n" +
-                "1 - add\n\n" +
+                "1 - add the record\n\n" +
                 "2 - actions with records\n\n" +
                 "3 - actions with balance\n\n" +
                 "4 - create backup\n" +
@@ -322,7 +322,7 @@ else if (mainMenuChoice.equals("-readme")) {
 
 else if (mainMenuChoice.equals("-help")) {
             System.out.println("\nErrors which can be come and how fix their:\n" +
-                                "1-In the backup method, you need to enter the path without quotes and in the uppercase\n" +
+                                "1-In the backup method, you need to enter the path without quotes and in the correct uppercase\n" +
                                 "2-Dates must be written without leading zeros, for example: 2000 1 9\n" +
                                 "3-The numbers in | | mean that if you enter these numbers, what is written will happen\n" +
                                 "4-If your balance is somehow broken, you can use the |rewrite balance sum of profits method|,\n" +
