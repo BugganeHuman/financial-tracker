@@ -97,15 +97,11 @@ class Tracker {
 
 
 
-    // даты которые принимает метод записываются в две переменные startDate и finishDate
-    // потом цикл проходит в диапозоне между этими датами, и на каждой итерации ищет в бд эту дату
-    // если находит - записывает его профит, расходы, доходы в общие переменные
+
+
     public void reportForAPeriod (int startYear, int startMonth, int startDay,
                                          int finishYear, int finishMonth, int finishDay) { // РАБОТАЕТ НЕ КОРЕКТНО
         String url = "jdbc:sqlite:financialDatabase.db";
-
-
-
 
         try(var conn = DriverManager.getConnection(url); ) {
 
@@ -144,22 +140,8 @@ class Tracker {
                 }catch (SQLException e) {
                     System.out.println("Error in reportForAPeriod(), found date, "+e.getMessage());
                 }
-
-
             }
                     System.out.printf("\nExpenses - %d%nIncome = %d%nProfit = %d%n\n", allExpenses, allIncome, allProfit);
-
-
-
-
-
-
-
-
-                //allExpenses += rs.getInt("expenses");
-                //allIncome += rs.getInt ("income");
-            //System.out.printf("Expenses - %d%nIncome - %d%n", allExpenses, allIncome);
-
 
         } catch (SQLException e) {
             System.out.println("Error in reportForAPeriod, " + e.getMessage());
@@ -290,8 +272,6 @@ class Tracker {
                     years.add(rs.getInt("year"));
                 }
 
-
-
                 for (int year : years) {
 
                     String sqlInForYears = "SELECT * FROM finance WHERE year = ?";
@@ -310,7 +290,6 @@ class Tracker {
                         System.out.println("Error in sortingTable (years) in for years, " + e.getMessage());
                     }
                 }
-
 
             } catch (SQLException e) {
                 System.out.println("Error in sortingTable(year), " + e.getMessage());
