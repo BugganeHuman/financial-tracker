@@ -60,7 +60,6 @@ class Main {
                 break;
             }
 
-
             try {
             String[] dateArray = dateString.split(" ");
             int year = Integer.parseInt(dateArray[0]);
@@ -80,6 +79,8 @@ class Main {
             }
 
         }
+
+
 
 
 
@@ -106,9 +107,7 @@ class Main {
 
 
 
-
-
-            else if (actRecordsChoice.equals("2")) { //  РАБОТАЕТ НЕ КОРЕКТНО, НАДО ПОЧЕНИТЬ
+            else if (actRecordsChoice.equals("2")) {
                 while (true) {
                 System.out.println("\nPress |0| - to return");
                 System.out.print("Enter the start date for report, separated by a space\n" +
@@ -143,12 +142,10 @@ class Main {
                 }
 
                 }
-
-
-
-
-
             }
+
+
+
             else if (actRecordsChoice.equals("3")) {
                 while (true) {
                     System.out.println("Press |0| - to return");
@@ -189,12 +186,11 @@ class Main {
                         System.out.println("Error, "+e.getMessage());
                         break;
                     }
-
-
                 }
-
-
             }
+
+
+
             else if (actRecordsChoice.equals("4")) {
                 while (true) {
                     System.out.println("Press |0| - to return");
@@ -241,13 +237,13 @@ class Main {
                         System.out.println("Error, "+e.getMessage());
                         break;
                     }
-
-
                 }
-            }
-
-            }
+            }}
         }
+
+
+
+
 
         else if (mainMenuChoice.equals("3")) {
             while (true) {
@@ -278,14 +274,11 @@ class Main {
                         System.out.println("\nError, "+e.getMessage());
                         break;
                     }
-
                 }
-            }
-
-
-            }
-
+            }}
         }
+
+
 
 
 
@@ -302,16 +295,15 @@ class Main {
                     tracker.createBackup(path);
                     System.out.print("\nBackup added\n");
                     break;
-
-                }catch (Throwable e) {
+                }
+                catch (Throwable e) {
                     System.out.print("\nError, "+e.getMessage() + "\n");
                     break;
                 }
-
-
             }
-
         }
+
+
 
 
 
@@ -327,6 +319,8 @@ else if (mainMenuChoice.equals("-readme")) {
 
 
 
+
+
 else if (mainMenuChoice.equals("-help")) {
             System.out.println("\nErrors which can be come and how fix their:\n" +
                                 "1-In the backup method, you need to enter the path without quotes and in the correct uppercase\n" +
@@ -337,9 +331,6 @@ else if (mainMenuChoice.equals("-help")) {
                                 "  you can use the |add in balance| method to add funds that were already on the balance before using the tracker" );
 
         }
-
-
         }
-
 }
 }
