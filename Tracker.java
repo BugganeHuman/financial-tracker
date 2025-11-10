@@ -10,7 +10,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.Date;
 
 class Tracker {
 
@@ -101,29 +104,63 @@ class Tracker {
                                          int finishYear, int finishMonth, int finishDay) { // РАБОТАЕТ НЕ КОРЕКТНО
         String url = "jdbc:sqlite:financialDatabase.db";
 
-        String sql = "SELECT * FROM finance WHERE year >= ? AND year <= ?";
 
 
-        try(var conn = DriverManager.getConnection(url); var prSt = conn.prepareStatement(sql);) {
-            prSt.setInt(1, startYear);
-            prSt.setInt(2, finishYear);
+
+        try(var conn = DriverManager.getConnection(url); ) {
+
             LocalDate startDate = LocalDate.of(startYear, startMonth, startDay);
             LocalDate finishDate = LocalDate.of(finishYear, finishMonth, finishDay);
 
-            var rs = prSt.executeQuery();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.M.d");
+
+            long daysBetween = ChronoUnit.DAYS.between(startDate, finishDate);
+
             int allExpenses = 0;
             int allIncome = 0;
-            int counterFinish = 0;
-            while (rs.next()) {
-                counterFinish++;
+            int allProfit = 0;
+            for (long i = 0; i<=daysBetween;i++) {
+                LocalDate current = startDate.plusDays(i);
+
+                String dateString = current.format(formatter);
+
+                String[] dateArray = dateString.split("\\.");
+
+                int year = Integer.parseInt(dateArray[0]);
+                int month = Integer.parseInt(dateArray[1]);
+                int day = Integer.parseInt(dateArray[2]);
+                var sqlFoundDate = "SELECT * FROM finance WHERE year = ? AND month = ? AND day = ?";
+                try(var prStDate = conn.prepareStatement(sqlFoundDate);) {
+                    prStDate.setInt(1,year);
+                    prStDate.setInt(2,month);
+                    prStDate.setInt(3,day);
+                    var rsDate = prStDate.executeQuery();
+                    while (rsDate.next()) {
+                      allExpenses +=  rsDate.getInt("expenses");
+                      allIncome += rsDate.getInt("income");
+                      allProfit += rsDate.getInt("profit");
+                    }
+
+                }catch (SQLException e) {
+                    System.out.println("Error in reportForAPeriod(), found date, "+e.getMessage());
+                }
+
+
             }
+                    System.out.printf("\nExpenses - %d%nIncome = %d%nProfit = %d%n\n", allExpenses, allIncome, allProfit);
+
+
+
+
+
+
 
 
                 //allExpenses += rs.getInt("expenses");
                 //allIncome += rs.getInt ("income");
             //System.out.printf("Expenses - %d%nIncome - %d%n", allExpenses, allIncome);
 
-            rs.close();
+
         } catch (SQLException e) {
             System.out.println("Error in reportForAPeriod, " + e.getMessage());
         }
