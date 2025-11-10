@@ -121,18 +121,24 @@ class Main {
                                 "                       ");
                 String finishDateReport = input.nextLine();
                 try {
+
                 String [] startDateArray = startDateReport.split(" ");
+
                 String [] finishDateArray = finishDateReport.split(" ");
+
                 int startYear = Integer.parseInt(startDateArray[0]);
+
                 int startMonth = Integer.parseInt(startDateArray[1]);
                 int startDay = Integer.parseInt(startDateArray[2]);
                 int finishYear = Integer.parseInt(finishDateArray[0]);
                 int finishMonth = Integer.parseInt(finishDateArray[1]);
                 int finishDay = Integer.parseInt(finishDateArray[2]);
+
                     tracker.reportForAPeriod(startYear, startMonth, startDay, finishYear, finishMonth, finishDay);
+
                     break;
                 } catch (Throwable e) {
-                    System.out.println("\nError, " + e.getMessage());
+                    System.out.println("\nError, 1" + e.getMessage());
                     break;
                 }
 
