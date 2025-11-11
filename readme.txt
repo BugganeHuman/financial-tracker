@@ -19,8 +19,8 @@ Technologies used: SQLite for storing records, file manipulation (
 _________________________________________________________________________________________
 
 To install it:
-1) Download JDK21 from the official website:
-https://download.oracle.com/java/21/latest/
+1) Download JDK 21.0.8 from the official website:
+https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html
 
 2) After installation, set the following system variables:
 
