@@ -38,6 +38,10 @@ If it shows the version, everything is fine. If it returns errors, Google guides
 4) Download the run_windows folder if you're on Windows or run_linux if you're on Mac/Linux.
 These folders contain their own readme files that explain how to install them for specific OSes.
 
+to download 
+Clone the repository with command:
+git clone https://github.com/BugganeHuman/financial-tracker.git (if you are needing to download git-
+https://git-scm.com/download/)
 ______________________________________________________________________________________________
 
 
