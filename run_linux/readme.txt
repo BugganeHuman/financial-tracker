@@ -2,7 +2,7 @@
 While in the directory with the .sh file,
 type the command without quotes "chmod +x run.sh"
 and the command to run "./run.sh"
-you need the java 21.0.2 for start this programm
+you need the java 21.0.8 for start this programm
 
 ### Creating a Shortcut 
 **Linux / Ubuntu:**  
@@ -16,6 +16,7 @@ you need the java 21.0.2 for start this programm
 2. Paste `/path/to/run.sh`.  
 3. Save → drag to Desktop.  
 4. Double-click to run.
+
 
 
 
