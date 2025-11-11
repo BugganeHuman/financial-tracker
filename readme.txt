@@ -11,12 +11,12 @@ Balance manipulation functions: show balance,
 rewrite balance sum of profits, add in balance.
 
 And a database backup function.
-______________________________________________________________________________________________
+_________________________________________________________________________________________
 
 Technologies used: SQLite for storing records, file manipulation (
 .txt file storing the balance value), JavaCore (date manipulation).
 
-______________________________________________________________________________________________
+_________________________________________________________________________________________
 
 To install it:
 1) Download JDK21 from the official website:
@@ -42,9 +42,14 @@ to download
 Clone the repository with command:
 git clone https://github.com/BugganeHuman/financial-tracker.git (if you are needing to download git-
 https://git-scm.com/download/)
-______________________________________________________________________________________________
+_________________________________________________________________________________________
 
+## Author
+**BugganeHuman**
+GitHub:   https://github.com/BugganeHuman
+Email:    bugganehuman@gmail.com
 
+_________________________________________________________________________________________
 
 
 
