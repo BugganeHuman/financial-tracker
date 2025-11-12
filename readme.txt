@@ -1,8 +1,8 @@
 This is a simple financial tracker with a console interface.
 
 It has the following functions:
-adding records (records are added as follows: year, month, day, expenses, income, profit
-- profit is calculated automatically and added using the income - expenses formula);
+adding records (records are added as follows: year, month, day, expenses, income, comment,
+profit - profit is calculated automatically and added using the income - expenses formula);
 
 Record manipulation functions, namely: show all records, report for a period,
 sort records, find a record, delete record;
