@@ -27,7 +27,8 @@ class Tracker {
                 "day INTEGER NOT NULL," +
                 "expenses INTEGER," +
                 "income INTEGER," +
-                "profit INTEGER" +
+                "profit INTEGER," +
+                "comment TEXT" +
                 ");";
 
 
@@ -41,7 +42,7 @@ class Tracker {
 
 
 
-    public void add (int year, int month, int day, int expenses, int income) {
+    public void add (int year, int month, int day, int expenses, int income, String comment) {
         String url = "jdbc:sqlite:financialDatabase.db";
         try {
             String sql = "SELECT * FROM finance WHERE year = ? AND month = ? AND day = ?";
@@ -56,15 +57,16 @@ class Tracker {
                     reduceInBalance(rs.getInt("expenses"), rs.getInt("income"));
                     rs.close();
                     String urlUpdate = "jdbc:sqlite:finance";
-                    String sqlUpdate = "UPDATE finance SET expenses = ?, income = ?, profit = ? WHERE year = ? AND month = ? AND day = ? ";
+                    String sqlUpdate = "UPDATE finance SET expenses = ?, income = ?, profit = ?, comment = ?WHERE year = ? AND month = ? AND day = ? ";
                     try (var prSt = conn.prepareStatement(sqlUpdate);) {
                         addInBalance(expenses, income);
                         prSt.setInt(1, expenses);
                         prSt.setInt(2, income);
                         prSt.setInt(3, income - expenses);
-                        prSt.setInt(4, year);
-                        prSt.setInt(5, month);
-                        prSt.setInt(6, day);
+                        prSt.setString(4, comment);
+                        prSt.setInt(5, year);
+                        prSt.setInt(6, month);
+                        prSt.setInt(7, day);
                         prSt.executeUpdate();
                         return;
 
@@ -79,7 +81,7 @@ class Tracker {
         } catch (SQLException e) {
             System.out.println("Error in in add()2 " + e.getMessage() + e.getErrorCode() );
         }
-        String sql = "INSERT INTO finance (year, month, day, expenses, income, profit) VALUES (?,?,?,?,?,?)";
+        String sql = "INSERT INTO finance (year, month, day, expenses, income, profit, comment) VALUES (?,?,?,?,?,?,?)";
         addInBalance(expenses,income);
         try(var connection = DriverManager.getConnection(url); var prStmt = connection.prepareStatement(sql)) {
             prStmt.setInt(1, year);
@@ -88,6 +90,7 @@ class Tracker {
             prStmt.setInt(4, expenses);
             prStmt.setInt(5, income);
             prStmt.setInt(6, income - expenses);
+            prStmt.setString(7,comment);
             prStmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Error in add()3 " + e.getMessage());
@@ -243,13 +246,14 @@ class Tracker {
                  var rs = prSt.executeQuery();) {
 
                 while (rs.next()) {
-                    System.out.printf("Year - %d  Month - %d  Date - %d  expenses - %d  income - %d  profit - %d%n%n",
+                    System.out.printf("Year - %d  Month - %d  Date - %d  expenses - %d  income - %d  profit - %d comment - %s%n%n",
                             rs.getInt("year"),
                             rs.getInt("month"),
                             rs.getInt("day"),
                             rs.getInt("expenses"),
                             rs.getInt("income"),
-                            rs.getInt("profit")
+                            rs.getInt("profit"),
+                            rs.getString("comment")
 
                     );
 
@@ -409,13 +413,14 @@ public void showTable() {
          var prSt = conn.prepareStatement(sql);
          var rs = prSt.executeQuery();) {
         while (rs.next()) {
-            System.out.printf("Year - %d  Month - %d  Date - %d  expenses - %d  income - %d  profit - %d%n%n",
+            System.out.printf("Year - %d  Month - %d  Date - %d  expenses - %d  income - %d  profit - %d comment - %s%n%n",
                     rs.getInt("year"),
                     rs.getInt("month"),
                     rs.getInt("day"),
                     rs.getInt("expenses"),
                     rs.getInt("income"),
-                    rs.getInt("profit"));
+                    rs.getInt("profit"),
+                    rs.getString("comment"));
         }
 
 
@@ -456,18 +461,22 @@ public void findRow(int year, int month, int day) {
         prSt.setInt(2, month);
         prSt.setInt(3, day);
         var rs =  prSt.executeQuery();
-        if (rs.next() == false ) {
-            System.out.println("\nnothing found");
-        }
+
         while (rs.next()) {
-            System.out.printf("%nYear - %d  Month - %d  Date - %d  expenses - %d  income - %d  profit - %d%n",
+            System.out.printf("%nYear - %d  Month - %d  Date - %d  expenses - %d  income - %d  profit - %d comment - %s%n",
                     rs.getInt("year"),
                     rs.getInt("month"),
                     rs.getInt("day"),
                     rs.getInt("expenses"),
                     rs.getInt("income"),
-                    rs.getInt("profit"));
+                    rs.getInt("profit"),
+                    rs.getString("comment"));
+
+
         }
+
+
+
 
 
 
