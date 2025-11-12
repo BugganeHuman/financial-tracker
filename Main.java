@@ -68,9 +68,13 @@ class Main {
             int day = Integer.parseInt(dateArray[2]);
             System.out.print("Write expenses: ");
             String expenses = input.next();
+            input.nextLine();
             System.out.print("Write income: ");
             String income = input.next();
-                tracker.add(year, month, day, Integer.parseInt(expenses), Integer.parseInt(income));
+            input.nextLine();
+            System.out.print("Write comment: ");
+            String comment = input.nextLine();
+                tracker.add(year, month, day, Integer.parseInt(expenses), Integer.parseInt(income), comment);
                 System.out.println("\nrecord added");
             } catch (Throwable e) {
                 System.out.println("Error, " + e.getMessage());
