@@ -353,7 +353,6 @@ class Tracker {
                       setOfMonth.add(new MonthProfit(rs.getInt("year"), rs.getInt("month"), profitOfMonth));
 
 
-
                     } catch (SQLException e) {
                         System.out.println("Error in sortingTable (month) in while rs.next for search profit of month, "+e.getMessage());
                     }
@@ -475,12 +474,6 @@ public void findRow(int year, int month, int day) {
 
         }
 
-
-
-
-
-
-
         rs.close();
     } catch ( SQLException e) {
         System.out.println("Error in findRow(), " + e.getMessage());
@@ -510,3 +503,4 @@ Files.createDirectories(pathToBackup.getParent());
 }
 }
 }
+
