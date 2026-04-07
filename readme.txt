@@ -47,7 +47,7 @@ ________________________________________________________________________________
 ## Author
 **BugganeHuman**
 GitHub:   https://github.com/BugganeHuman
-Email:    bugganehuman@gmail.com
+Email:    BugganeHuman@proton.me
 
 _________________________________________________________________________________________
 
